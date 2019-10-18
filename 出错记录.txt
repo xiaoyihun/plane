@@ -1,0 +1,12 @@
+出错：outtextxy(Width * 0.3, High * 0.2,("新游戏"));
+
+
+错误是： 2 IntelliSense: 没有与参数列表匹配的 重载函数 "ATL::CStringT<BaseType, StringTraits>::Format [其中 BaseType=wchar_t, StringTraits=StrTraitMFC<wchar_t, ATL::ChTraitsCRT<wchar_t>>]" 实例
+            参数类型为: (const char [8], int)
+对象类型是: CString g:\C++\Static\Static\StaticDlg.cpp 99 5 Static
+
+解决方案：
+
+str.Format(_T("Fuck %d"),count);或str.Format(L"Fuck %d",count);
+
+修改后：outtextxy(Width * 0.3, High * 0.2,_T("新游戏"));
