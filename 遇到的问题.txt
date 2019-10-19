@@ -4,3 +4,35 @@ putimage(position_x - 50, position_y - 60, &img_planeNormal1, NOTSRCERASE);//ÏÔÊ
 //2.Õâ¸öº¯ÊýµÄ×÷ÓÃ
 setbkmode(TRANSPARENT)
 
+
+//Î´½â¾öµÄÎÊÌâ
+	1.¶þºÅ·É»úµÄËæ»úÒÆ¶¯ÈÝÒ×³öµ½±ß½çÖ®Íâ
+	2.BOSS·É»úµÄÒÆ¶¯ËÙ¶È¹ý¿ì£¬ÇÒËÀºó¾ÍÎÞ·¨ÔÚ³öÀ´ÁË
+	3.×Ô¼ºµÄ·É»úËÀºó£¬²»ÄÜÖØÍæ
+	4.Ö»ÄÜ·¢ÉäÒ»¿Å×Óµ¯
+	5.ÉäÖÐµÐ»ú£¬ÈÃµÐ»úËÀµÄ·¶Î§
+	6.µÐ»ú×²»÷µ½±¾»úµÄ·¶Î§ÎÊÌâ
+	7.¹Ø±ÕÀàÐÍ×ª»¯µ¼ÖÂºÜ¶à¾¯¸æ
+	
+//»ñµÃÊó±ê
+MOUSEMSG m;//¶¨ÒåÊó±êÏûÏ¢
+		while (MouseHit())//Õâ¸öº¯ÊýÓÃÓÚ¼ì²âµ±Ç°ÊÇ·ñÓÐÊó±êÏûÏ¢
+		{
+			m = GetMouseMsg();
+			if (m.uMsg == WM_MOUSEMOVE)
+			{
+				//·É»úµÄÎ»ÖÃµÈÓÚÊó±êËùÔÚÎ»ÖÃ
+				position_x = m.x;
+				position_y = m.y;
+
+			}
+			else if(m.uMsg==WM_LBUTTONDOWN)
+			{
+				//°´ÏÂÊó±ê×ó¼ü£¬·¢
+				bullet_x = position_x+18;
+				bullet_y = position_y - 108;
+				
+			}
+
+
+//absºÍfabsÎÊÌâµ¼ÖÂ¾¯¸æÎÊÌâºÜ¶à

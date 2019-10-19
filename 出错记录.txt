@@ -10,3 +10,7 @@
 str.Format(_T("Fuck %d"),count);或str.Format(L"Fuck %d",count);
 
 修改后：outtextxy(Width * 0.3, High * 0.2,_T("新游戏"));
+
+
+
+//忘记关闭窗口
