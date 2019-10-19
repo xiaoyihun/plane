@@ -22,6 +22,20 @@
 */
 
 IMAGE img_bk;//背景图片
+float position_x, position_y;//飞机位置
+float bullet_x, bullet_y;//子弹位置
+float enemy_x, enemy_y;//敌机位置
+float enemy2_x, enemy2_y;//敌机位置
+float enemy3_x, enemy3_y;//敌机位置
+IMAGE img_planeNormal1, img_planeNormal2;//正常飞机图片
+IMAGE img_planeExplode1, img_planeExplode2;//爆炸飞机图片
+IMAGE img_bullet1, img_bullet2;//子弹图片
+IMAGE img_enemyPlane1, img_enemyPlane2, img_enemyPlane3, img_enemyPlane4;//敌机图片
+int isExpolde = 0;//飞机是否爆炸
+int shengming = 3;//生命
+int score = 0;//得分
+int guanka = 1;//关卡
+int temp2;
 int gameStatus = 0;//游戏状态,0为初始菜单界面,1为正常游戏,2为结束游戏状态,3为游戏暂停
 void startMenu();//初始菜单界面
 void pauseMenu();//游戏暂停后菜单界面，一般按ESC键后启动该界面
@@ -67,7 +81,7 @@ void startMenu()
 		else if (input == '3')
 		{
 			gameStatus = 2;
-			//exit(0);
+			exit(0);
 		}
 	}
 }
@@ -92,6 +106,7 @@ void pauseMenu()
 	FlushBatchDraw();//BeginBatchDraw直到执行 FlushBatchDraw 或 EndBatchDraw 才将之前的绘图输出。
 	Sleep(2);
 
+	
 	char input;
 	if (_kbhit())//判断是否有输入
 	{
@@ -116,15 +131,34 @@ void pauseMenu()
 //设置图片存储位置
 void startup()
 {
-	initgraph(Width, High);
+	initgraph(Width, High); 
 	//获取窗口句柄
 	HWND hwnd = GetHWnd();
 	//设置窗口标题文字
 	SetWindowText(hwnd, _T("数据结构小游戏开发-飞机打针"));
 
-	loadimage(&img_bk, _T("./res/images/background.jpg"));
+	loadimage(&img_bk, _T("./res/images/background.jpg"));//背景图片
+	loadimage(&img_planeNormal1, _T("./res/images/hero.png"));//正常飞机
+	loadimage(&img_planeNormal2, _T("./res/images/hero.png"));//正常飞机
+	loadimage(&img_bullet1, _T("./res/images/hero1.png"));//爆炸飞机
+	loadimage(&img_bullet2, _T("./res/images/hero1.png"));//爆炸飞机
+	loadimage(&img_enemyPlane1, _T("./res/images/enemy1.png"));//敌机
+	loadimage(&img_enemyPlane2, _T("./res/images/enemy2.png"));//敌机
+	loadimage(&img_enemyPlane3, _T("./res/images/enemy3.png"));//敌机
+	loadimage(&img_enemyPlane4, _T("./res/images/enemy4.png"));//敌机
+	loadimage(&img_planeExplode1, _T("./res/images/bullet2.png"));//子弹
+	loadimage(&img_planeExplode2, _T("./res/images/bullet2.png"));//子弹
 
 
+	position_x = Width * 0.5;//飞机位置
+	position_y = High * 0.9;//飞机位置
+
+
+	bullet_x = position_x;//子弹位置
+	bullet_y = -25;//子弹位置
+
+	enemy_x = Width * 0.5;//敌机位置
+	enemy_y = 10;//敌机位置
 
 
 	BeginBatchDraw();
@@ -134,6 +168,35 @@ void startup()
 			
 }
 
+void startup2()
+{
+	loadimage(&img_bk, _T("./res/images/background.jpg"));//背景图片
+	loadimage(&img_planeNormal1, _T("./res/images/hero.png"));//正常飞机
+	loadimage(&img_planeNormal2, _T("./res/images/hero.png"));//正常飞机
+	loadimage(&img_bullet1, _T("./res/images/hero1.png"));//爆炸飞机
+	loadimage(&img_bullet2, _T("./res/images/hero1.png"));//爆炸飞机
+	loadimage(&img_enemyPlane1, _T("./res/images/enemy1.png"));//敌机
+	loadimage(&img_enemyPlane2, _T("./res/images/enemy2.png"));//敌机
+	loadimage(&img_enemyPlane3, _T("./res/images/enemy3.png"));//敌机
+	loadimage(&img_enemyPlane4, _T("./res/images/enemy4.png"));//敌机
+	loadimage(&img_planeExplode1, _T("./res/images/bullet2.png"));//子弹
+	loadimage(&img_planeExplode2, _T("./res/images/bullet2.png"));//子弹
+
+
+	position_x = Width * 0.5;//飞机位置
+	position_y = High * 0.9;//飞机位置
+
+
+	bullet_x = position_x;//子弹位置
+	bullet_y = -25;//子弹位置
+
+	enemy_x = Width * 0.5;//敌机位置
+	enemy_y = 10;//敌机位置
+
+
+	BeginBatchDraw();
+}
+
 //显示界面
 void show()
 {
@@ -141,7 +204,7 @@ void show()
 		pauseMenu();//游戏暂停后菜单界面,一般按ESC键后启动该界面
 
 	putimage(0, 0, &img_bk);//显示背景
-
+	
 
 }
 
@@ -153,7 +216,7 @@ int main()
 		show();//显示界面
 	}
 
-	
+	//getchar();
 
 	return 0;
 }

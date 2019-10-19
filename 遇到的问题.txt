@@ -1,0 +1,6 @@
+//1.这个函数第四个参数的作用
+putimage(position_x - 50, position_y - 60, &img_planeNormal1, NOTSRCERASE);//显示正常飞机
+
+//2.这个函数的作用
+setbkmode(TRANSPARENT)
+
