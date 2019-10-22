@@ -89,6 +89,7 @@ void gameover();//游戏结束、后续处理
 void startMenu()
 {
 	putimage(0, 0, &img_bk);
+	//使文本背景与控件背景一样
 	setbkmode(TRANSPARENT);
 	settextcolor(BLACK);
 	settextstyle(50, 0, _T("黑体"));
