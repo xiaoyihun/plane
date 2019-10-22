@@ -4,10 +4,16 @@
 #include<math.h>
 #include<string.h>
 #include<stdlib.h>
+#include<windows.h >
+
 
 #include<graphics.h>
 #include<easyx.h>
 #include <tchar.h>
+
+#include<iostream>
+using namespace std;
+#include<list>
 
 
 
@@ -18,29 +24,53 @@
 #define Width 512
 
 /*
-	1.初始画游戏界面 
-		void startMenu()
-	2.显示画面
-	 void show();
-	3.
+	1//图片和界面初始化
+	void startup();
+
+	2//初始化游戏菜单界面
+	void startMenu()
+
+	3//显示游戏界面
+	void show();
+
+	4//飞机跟随鼠标移动
+	updateWithlnput();
+
+	5//子弹和敌机自由移动，死亡
+	updateWithoutlnput();
+
+	6.//游戏结束处理
+	gameover()
+
 */
 
-IMAGE img_bk;//背景图片
+typedef struct Bullet
+{
+	int bx;
+	int by;
+}Bullt;
+
+list<Bullt> bullt;//存储子弹链表
+
 float position_x, position_y;//飞机位置
 float bullet_x, bullet_y;//子弹位置
 float enemy_x, enemy_y;//敌机位置
 float enemy2_x, enemy2_y;//敌机位置
 float enemy3_x, enemy3_y;//敌机位置
+
+IMAGE img_bk;//背景图片
 IMAGE img_planeNormal1, img_planeNormal2;//正常飞机图片
 IMAGE img_planeExplode1, img_planeExplode2;//爆炸飞机图片
 IMAGE img_bullet1, img_bullet2;//子弹图片
 IMAGE img_enemyPlane1, img_enemyPlane2, img_enemyPlane3, img_enemyPlane4;//敌机图片
+
 int isExpolde = 0;//飞机是否爆炸
 int shengming = 3;//生命
 int score = 0;//得分
 int guanka = 1;//关卡
 int temp=2;
 int gameStatus = 0;//游戏状态,0为初始菜单界面,1为正常游戏,2为结束游戏状态,3为游戏暂停
+
 void startMenu();//初始菜单界面
 void pauseMenu();//游戏暂停后菜单界面，一般按ESC键后启动该界面
 void startup();//数据初始化
@@ -141,11 +171,13 @@ void pauseMenu()
 //设置图片存储位置
 void startup()
 {
+	//初始化图形系统
 	initgraph(Width, High); 
 	//获取窗口句柄
 	HWND hwnd = GetHWnd();
 	//设置窗口标题文字
 	SetWindowText(hwnd, _T("数据结构小游戏开发-飞机打针"));
+	
 
 	loadimage(&img_bk, _T("./res/images/background.jpg"));//背景图片
 	loadimage(&img_planeNormal1, _T("./res/images/hero.png"),150,100,true);//正常飞机
@@ -230,9 +262,13 @@ void show()
 		putimage(position_x - 50, position_y - 70, &img_planeNormal1, SRCPAINT);//显示正常飞机
 		
 
+		for (list<Bullet>::iterator it = bullt.begin(); it != bullt.end(); it++)
+		{
+			putimage(it->bx - 7, it->by, &img_bullet2, SRCAND);//掩码图
+			putimage(it->bx - 7, it->by, &img_bullet1, SRCPAINT);//显示子弹
+		}
 		
-		putimage(bullet_x - 7, bullet_y, &img_bullet2, SRCAND);//掩码图
-		putimage(bullet_x - 7, bullet_y, &img_bullet1, SRCPAINT);//显示子弹
+		
 
 		putimage(enemy_x, enemy_y, &img_enemyPlane2, SRCAND);
 		putimage(enemy_x, enemy_y, &img_enemyPlane1, SRCPAINT);//显示敌机
@@ -289,14 +325,31 @@ void show()
 	Sleep(2);
 }
 
+
+
+
+#if 1
+
 //子弹和敌机自由移动
 void updateWithoutlnput()
 {
 	if (isExpolde <= 4)
 	{
-		if (bullet_y > -25)
-			bullet_y = bullet_y - 2;
+		//子弹的移动
+		for (list<Bullet>::iterator it = bullt.begin(); it != bullt.end(); )
+		{
+			if (it->by > -25)
+				it->by = it->by - 2;
 
+			if (it->by <= -25)
+			{
+				it = bullt.erase(it);
+			}
+			else
+				++it;
+		}
+
+		//第一个飞机的移动
 		if (enemy_y < High - 25)
 		{
 			enemy_y = enemy_y + 0.5;
@@ -304,6 +357,7 @@ void updateWithoutlnput()
 		else
 			enemy_y = 5;
 
+		//boss机的移动
 		if (temp == 1)
 		{
 			if (enemy2_y < High - 25)
@@ -317,10 +371,11 @@ void updateWithoutlnput()
 			}
 		}
 
+		//第二个飞机的移动
 		if (guanka >= 2)
 		{
 			if (enemy3_y < High - 25)
-			{	
+			{
 				enemy3_y = enemy3_y + 0.45;
 			}
 			else
@@ -330,31 +385,49 @@ void updateWithoutlnput()
 			}
 		}
 
-		if (fabs(bullet_x - enemy_x) + fabs(bullet_y - enemy_y) < 80)//子弹击中敌机
+		//循环检测子弹是否击中敌机
+		for (list<Bullet>::iterator it = bullt.begin(); it != bullt.end(); )
 		{
-			enemy_x = rand() % Width;
-			enemy_y = -40;
-			bullet_y = -85;
-			score++;
+
+			bool bue = false;
+			if (fabs(it->bx - enemy_x) + fabs(it->by - enemy_y) < 80)//子弹击中敌机
+			{
+				enemy_x = rand() % Width;
+				enemy_y = -40;
+
+
+
+				bue = true;
+
+				score++;
+			}
+
+			if (fabs(it->bx - enemy2_x) + fabs(it->by - enemy2_y) < 80)//子弹击中敌机
+			{
+				enemy2_x = rand() % Width;
+				enemy2_y = -40;
+
+				bue = true;
+				temp++;
+				score++;
+			}
+
+			if (fabs(it->bx - enemy3_x) + fabs(it->by - enemy3_y) < 80)//子弹击中敌机
+			{
+				enemy3_x = rand() % Width;
+				enemy3_y = -40;
+
+				bue = true;
+				score++;
+			}
+
+			if (!bue)
+				it++;
+			else
+				it = bullt.erase(it);
 		}
 
-		if (fabs(bullet_x - enemy2_x) + fabs(bullet_y - enemy2_y) < 80)//子弹击中敌机
-		{
-			enemy_x = rand() % Width;
-			enemy_y = -40;
-			bullet_y = -85;
-			temp++;
-			score++;
-		}
-
-		if (fabs(bullet_x - enemy3_x) + fabs(bullet_y - enemy3_y) < 80)//子弹击中敌机
-		{
-			enemy_x = rand() % Width;
-			enemy_y = -40;
-			bullet_y = -85;
-			score++;
-		}
-
+		//更改关卡
 		if (score >= 10)
 		{
 			guanka = 2;
@@ -364,6 +437,7 @@ void updateWithoutlnput()
 			guanka = 3;
 		}
 
+		//判断敌机是否撞到我们
 		if (fabs(position_x - enemy_x) + fabs(position_y - enemy_y) < 150 ||
 			fabs(position_x - enemy2_x) + fabs(position_y - enemy2_y) < 150 ||
 			fabs(position_x - enemy3_x) + fabs(position_y - enemy3_y) < 150) //敌机击中我们
@@ -379,7 +453,7 @@ void updateWithoutlnput()
 				startup2();
 				shengming = 1;
 			}
-			
+
 		}
 
 	}
@@ -389,6 +463,7 @@ void updateWithoutlnput()
 //飞机跟随鼠标移动
 void updateWithlnput()
 {
+	
 	if (isExpolde <= 4)
 	{
 		MOUSEMSG m;//定义鼠标消息
@@ -401,13 +476,21 @@ void updateWithlnput()
 				position_x = m.x;
 				position_y = m.y;
 
+
 			}
 			else if(m.uMsg==WM_LBUTTONDOWN)
 			{
 				//按下鼠标左键，发
 				bullet_x = position_x+18;
 				bullet_y = position_y - 108;
-				
+
+				Bullet a;
+				a.bx = bullet_x;
+				a.by = bullet_y;
+
+
+				bullt.push_back(a);
+	
 			}
 		}
 	}
@@ -423,6 +506,9 @@ void updateWithlnput()
 	}
 }
 
+#endif
+
+
 //结束游戏处理
 void gameover()
 {
@@ -431,12 +517,18 @@ void gameover()
 	closegraph();
 }
 
+
+
 int main()
 {
+	
+	
+
 	startup();//数据初始化
 	while (1)//游戏循环执行
 	{
 		show();//显示界面
+		
 		updateWithoutlnput();//与用户输入无关的更新
 		updateWithlnput();//与用户输入有关的更新
 	}
